@@ -24,13 +24,24 @@ completed=true;
     const done = await response.json();
     console.log(done);
   };
+  const deleteHandler = async() => {
+    const response = await fetch("/api/delete-todo", {
+      method: "DELETE",
+      body: JSON.stringify(props.id),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const done = await response.json();
+    console.log(done);
+  }
   return (
     <Card>
       <h5>{props.title}</h5>
       <p>{props.description}</p>
       <p>{props.status}</p>
       {!completed &&<button onClick={markAsDoneHandler}>Mark as Done</button>}
-      <button>Delete</button>
+      <button onClick={deleteHandler}>Delete</button>
     </Card>
   );
 }
