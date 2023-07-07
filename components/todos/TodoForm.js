@@ -12,12 +12,13 @@ function TodoForm(props) {
     const data = {
       title: titleRef.current.value,
       description: descriptionRef.current.value,
+      status:'incomplete'
     };
     const response = await fetch("/api/new-todo", {
       method: "POST",
       body: JSON.stringify(data),
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "application/json", 
       },
     });
     const done = await response.json();
