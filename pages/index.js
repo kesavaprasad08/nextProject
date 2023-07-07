@@ -3,31 +3,46 @@ import Head from "next/head";
 import TodosList from "@/components/todos/TodosList";
 import TodoForm from "@/components/todos/TodoForm";
 import { useState } from "react";
+import { MongoClient } from "mongodb";
 
-const DUMMY_LIST = [
-  {
-    id: "m1",
-    title: "Gym",
-  },
-  {
-    id: "m2",
-    title: "Learn web dev",
-  },
-];
-export default function Home() {
+function Home(props) {
   const [isAdd, setIsAdd] = useState(false);
   const addNewTodoHandler = () => {
     setIsAdd(true);
   };
-  const cancelAddTodoHandler=() => {
+  const cancelAddTodoHandler = () => {
     setIsAdd(false);
-  }
+  };
   return (
     <div>
-      <TodosList todos={DUMMY_LIST} />
+      <TodosList todos={props.todos} />
 
       {!isAdd && <button onClick={addNewTodoHandler}>Add a new Todo</button>}
-      {isAdd && <TodoForm onCancel={cancelAddTodoHandler}/>}
+      {isAdd && <TodoForm onCancel={cancelAddTodoHandler} />}
     </div>
   );
 }
+
+export async function getStaticProps() {
+  const client = await MongoClient.connect(
+    "mongodb+srv://kesav:rollno1212@cluster0.cedis9y.mongodb.net/todos?retryWrites=true&w=majority"
+  );
+  const db = client.db();
+
+  const todosCollection = db.collection("todos");
+  const todos = await todosCollection.find().toArray();
+  client.close();
+
+  return {
+    props: {
+      todos: todos.map((todo) => ({
+        title: todo.title,
+        description: todo.description,
+        id: todo._id.toString(),
+      })),
+    },
+    revalidate: 2,
+  };
+}
+
+export default Home;

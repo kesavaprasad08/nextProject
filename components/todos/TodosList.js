@@ -8,6 +8,7 @@ function TodosList(props) {
             key={todo.id}
             id={todo.id}
             title={todo.title}
+            description={todo.description}
             />
         ))}
     </>
